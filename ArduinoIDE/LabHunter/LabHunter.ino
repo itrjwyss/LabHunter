@@ -24,100 +24,26 @@ void setup() {
   pinMode(avanza2, OUTPUT);
   pinMode(infra1, INPUT);
   pinMode(infra2, INPUT);
-
-  movements.setPrinter (Serial);
 }
 
 void loop() {
-  //While we have not reached the goal
-  while(!detectGoal()){
 
-    while((!detectIntersection()) || (!detectEndOfRoad())){
-      //Move the robot
-      move();
-    }
+  if(existSavedRoad()){
 
-    if(detectIntersection()){
-
-      //First Movement
-      if(!movements.isEmpty()){
-        if(existLeftRoad()){
-          movements.push(LEFT);
-          moveLeft();
-        }else if(existStraightRoad()){
-          movements.push(STRAIGHT);
-          moveStraight();
-        }else if(existRightRoad()){
-          movements.push(RIGHT);
-          moveRight();
-        }else{
-           Serial.print ("This Lab doesn't have solution.");
-           break;
-        }
-
-      //Other Movement
-      }else{
-        /*
-         * If the last movement is return, the robot needs to choose
-         * a new way based on the movement before return
-         */
-        if(peek(movements) == RETURN){
-          movements.pop();
-          char lastMovement = movements.pop();
-
-          /*
-           * If the last movement was left, the robot has three options:
-           * 1. Go Straight (Robot will turn to the left)
-           * 2. Go to the right (Robot will continue Straight)
-           * 3. Return (Robot will turn to the right=
-           */
-          if(lastMovement == LEFT){
-            //Option 1
-            if(existStraightRoad()){
-              movements.push(STRAIGHT);
-              moveStraight();
-
-            //Option 2
-            }else if(existRightRoad()){
-              movements.push(RIGHT);
-              moveRight();
-
-            //Option 3
-            }else{
-              movements.push(RETURN);
-              turningAround();
-            }
-
-          /*
-           * If the last movement was STRAIGHT, the robot has two options:
-           * 1. Go to the RIGHT (Robot will turn to the LEFT)
-           * 2. RETURN (Robot will continue in the same direcction)
-           */
-          }else if(lastMovement == STRAIGHT){
-            //Option 1
-            if(existRightRoad()){
-              movements.push(RIGHT);
-              moveRight();
-
-            //Option 2
-            }else{
-              movements.push(RETURN);
-              turningAround();
-            }
-
-          /*
-           * If the lastMovement was RIGTH, the Robot only has one Opetion
-           * 1. RETURN (The robot will tur to the left)
-           */
-          }else{
-            movements.push(RETURN);
-            moveLeft();
-          }
-
-        /*
-         * The Robot need exploring the Lab
-         */
-        }else{
+    deleteSavedRoad();
+  }else{
+    //While we have not reached the goal
+    while(!detectGoal()){
+  
+      while((!detectIntersection()) || (!detectEndOfRoad())){
+        //Move the robot
+        move();
+      }
+  
+      if(detectIntersection()){
+  
+        //First Movement
+        if(!movements.isEmpty()){
           if(existLeftRoad()){
             movements.push(LEFT);
             moveLeft();
@@ -127,23 +53,101 @@ void loop() {
           }else if(existRightRoad()){
             movements.push(RIGHT);
             moveRight();
-
-          //The robot need RETURN
           }else{
-             movements.push(RETURN);
-             turningAround();
+             Serial.print ("This Lab doesn't have solution.");
+             break;
           }
+  
+        //Other Movement
+        }else{
+          /*
+           * If the last movement is return, the robot needs to choose
+           * a new way based on the movement before return
+           */
+          if(peek(movements) == RETURN){
+            movements.pop();
+            char lastMovement = movements.pop();
+  
+            /*
+             * If the last movement was left, the robot has three options:
+             * 1. Go Straight (Robot will turn to the left)
+             * 2. Go to the right (Robot will continue Straight)
+             * 3. Return (Robot will turn to the right=
+             */
+            if(lastMovement == LEFT){
+              //Option 1
+              if(existStraightRoad()){
+                movements.push(STRAIGHT);
+                moveStraight();
+  
+              //Option 2
+              }else if(existRightRoad()){
+                movements.push(RIGHT);
+                moveRight();
+  
+              //Option 3
+              }else{
+                movements.push(RETURN);
+                turningAround();
+              }
+  
+            /*
+             * If the last movement was STRAIGHT, the robot has two options:
+             * 1. Go to the RIGHT (Robot will turn to the LEFT)
+             * 2. RETURN (Robot will continue in the same direcction)
+             */
+            }else if(lastMovement == STRAIGHT){
+              //Option 1
+              if(existRightRoad()){
+                movements.push(RIGHT);
+                moveRight();
+  
+              //Option 2
+              }else{
+                movements.push(RETURN);
+                turningAround();
+              }
+  
+            /*
+             * If the lastMovement was RIGTH, the Robot only has one Opetion
+             * 1. RETURN (The robot will tur to the left)
+             */
+            }else{
+              movements.push(RETURN);
+              moveLeft();
+            }
+  
+          /*
+           * The Robot need exploring the Lab
+           */
+          }else{
+            if(existLeftRoad()){
+              movements.push(LEFT);
+              moveLeft();
+            }else if(existStraightRoad()){
+              movements.push(STRAIGHT);
+              moveStraight();
+            }else if(existRightRoad()){
+              movements.push(RIGHT);
+              moveRight();
+  
+            //The robot need RETURN
+            }else{
+               movements.push(RETURN);
+               turningAround();
+            }
+          }
+           
         }
-         
+        
+      }else if(detectEndOfRoad()){
+        movements.push(RETURN);
+        turningAround();
       }
-      
-    }else if(detectEndOfRoad()){
-      movements.push(RETURN);
-      turningAround();
     }
-  }
 
-  setSavedPath(movements);
+    setSavedRoad(movements);
+  }
 }
 
 char peek(StackArray <char> stack){
@@ -206,11 +210,19 @@ boolean detectGoal(){
   return false;
 }
 
-void getSavedPath(){
+boolean existSavedRoad(){
+  return false;
+}
+
+void getSavedRoad(){
   
 }
 
-void setSavedPath(StackArray <char> stack){
+void deleteSavedRoad(){
+  
+}
+
+void setSavedRoad(StackArray <char> stack){
   
 }
 

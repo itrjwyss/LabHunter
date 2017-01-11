@@ -78,12 +78,14 @@ void loop() {
               //Option 1
               if(existStraightRoad()){
                 movements.push(STRAIGHT);
-                moveStraight();
+                //For the new perspective of the robot, it needs to move to the LEFT
+                moveLeft();
   
               //Option 2
               }else if(existRightRoad()){
                 movements.push(RIGHT);
-                moveRight();
+                //For the new perspective of the robot, it needs to move to STRAIGHT
+                moveStraight();
   
               //Option 3
               }else{
@@ -100,12 +102,14 @@ void loop() {
               //Option 1
               if(existRightRoad()){
                 movements.push(RIGHT);
-                moveRight();
+                //For the new perspective of the robot, it needs to move to the left
+                moveLeft();
   
               //Option 2
               }else{
                 movements.push(RETURN);
-                turningAround();
+                //For the new perspective of the robot, it needs to move to the left
+                moveLeft();
               }
   
             /*
@@ -114,7 +118,7 @@ void loop() {
              */
             }else{
               movements.push(RETURN);
-              moveLeft();
+              turningAround();
             }
   
           /*
